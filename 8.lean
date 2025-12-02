@@ -5,11 +5,9 @@ structure RecorderM (α) where
 instance : Monad RecorderM where
   pure x := ⟨[], x⟩ 
   bind m f := 
-    let log := m.store
-    let val := m.value
-    let newR := f val
+    let newR := f m.value
     let logs2 := newR.store
-    ⟨List.append log logs2, newR.value⟩ 
+    ⟨List.append m.store newR.store, newR.value⟩ 
 
 def RecorderM.print (s: String): RecorderM Unit := ⟨[s], ()⟩ 
 def RecorderM.run (self: RecorderM α) : List String := self.store
